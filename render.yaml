@@ -1,0 +1,12 @@
+# Render Blueprint: one free web service running the stdlib-only Python server.
+services:
+  - type: web
+    name: ballistic
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python server.py
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10

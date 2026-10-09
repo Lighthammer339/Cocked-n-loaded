@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BALLISTIC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="screen" width="640" height="360"></canvas>
+
+<div id="ui">
+  <!-- MAIN MENU -->
+  <section id="menu" class="screen">
+    <h1 class="logo"><span>BALLISTIC</span></h1>
+    <p class="tagline">~ SHOOT YOUR LOAD ~</p>
+    <div class="panel narrow">
+      <label for="nick">NICKNAME</label>
+      <input id="nick" maxlength="14" placeholder="Big Dick Energy" autocomplete="off">
+      <button id="btnPlay" class="big">PLAY ONLINE</button>
+      <button id="btnHow">HOW TO PLAY</button>
+      <button id="btnMusic">MUSIC: ON</button>
+    </div>
+    <p class="foot">(C) 2026 UNCIRCUMCISED SOFTWARE</p>
+  </section>
+
+  <!-- HOW TO PLAY -->
+  <section id="how" class="screen" hidden>
+    <div class="panel wide">
+      <h2>HOW TO PLAY</h2>
+      <ul class="rules">
+        <li>Every turn ALL players choose at the same time. When everyone has chosen (or the clock runs out) all moves happen at once.</li>
+        <li><b class="c-cyan">MOVE</b> 1 tile. Two dicks going for the same tile bonk heads and both stay put.</li>
+        <li><b class="c-pink">SHOOT YOUR LOAD</b> at any tile in range. Whoever is standing there <i>after</i> the moves gets splatted. Predict where they'll go!</li>
+        <li>A hit knocks off one of the victim's <b class="c-yel">BALLS</b>. It rolls nearby &mdash; walk over it to collect it.</li>
+        <li>Range = 1 + your balls. More balls, longer shots.</li>
+        <li>Lose both balls and you're out. Last dick standing wins.</li>
+        <li>After turn 30: <b class="c-org">SUDDEN DEATH</b> &mdash; the arena edge crumbles (flashing tiles are about to fall) and knocked-off balls fly away for good.</li>
+      </ul>
+      <h3>CONTROLS</h3>
+      <p class="controls">LEFT CLICK = act in current mode &middot; RIGHT CLICK = shoot<br>
+        Q / 1 = MOVE mode &middot; E / 2 = SHOOT mode &middot; SPACE = toggle &middot; S = stay</p>
+      <button class="back">BACK</button>
+    </div>
+  </section>
+
+  <!-- LOBBY -->
+  <section id="lobby" class="screen" hidden>
+    <div class="cols">
+      <div class="panel">
+        <h2>OPEN ROOMS</h2>
+        <div id="roomList" class="list"></div>
+        <div class="row">
+          <input id="joinCode" maxlength="4" placeholder="CODE" class="code">
+          <button id="btnJoin">JOIN</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>CREATE ROOM</h2>
+        <label for="roomName">ROOM NAME</label>
+        <input id="roomName" maxlength="20" autocomplete="off">
+        <label>TURN TIME</label>
+        <div class="seg" id="turnSeg">
+          <button data-v="3">3s</button><button data-v="4" class="on">4s</button><button data-v="5">5s</button>
+        </div>
+        <label class="check"><input type="checkbox" id="roomPublic" checked> LIST PUBLICLY</label>
+        <button id="btnCreate" class="big">CREATE</button>
+      </div>
+    </div>
+    <button class="back">MAIN MENU</button>
+  </section>
+
+  <!-- ROOM -->
+  <section id="room" class="screen" hidden>
+    <div class="cols">
+      <div class="panel">
+        <h2 id="roomTitle">ROOM</h2>
+        <p class="codeline">CODE: <span id="roomCode" class="bigcode">----</span></p>
+        <div id="playerList" class="list"></div>
+        <div class="row hostonly">
+          <button id="btnBot">+ ADD BOT</button>
+          <div class="seg" id="roomTurnSeg">
+            <button data-v="3">3s</button><button data-v="4">4s</button><button data-v="5">5s</button>
+          </div>
+        </div>
+        <p id="turnInfo" class="guestonly small"></p>
+        <button id="btnStart" class="big hostonly">START GAME</button>
+        <p class="guestonly small blink">WAITING FOR HOST...</p>
+        <button id="btnLeave">LEAVE ROOM</button>
+      </div>
+      <div class="panel">
+        <h2>CHAT</h2>
+        <div id="chatLog" class="chat"></div>
+        <form id="chatForm" class="row">
+          <input id="chatInput" maxlength="120" autocomplete="off" placeholder="talk dirty...">
+          <button>SAY</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAME OVER -->
+  <section id="over" class="screen" hidden>
+    <div class="panel narrow">
+      <h2 id="overTitle">GAME OVER</h2>
+      <ol id="ranking"></ol>
+      <button id="btnBackRoom" class="big">BACK TO ROOM</button>
+    </div>
+  </section>
+
+  <div id="toast" hidden></div>
+  <button id="muteBtn" title="Music on/off">&#9835;</button>
+</div>
+
+<script src="audio.js"></script>
+<script src="sprites.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
