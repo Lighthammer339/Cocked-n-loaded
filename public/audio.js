@@ -22,36 +22,39 @@ const Sound = (() => {
   }
 
   const SONGS = {
+    // quirky oom-pah junkyard waltz-ish tune
     menu: {
-      bpm: 124, root: [48, 45, 41, 43], kind: ['M', 'm', 'M', 'M'],
-      kick: [0, 8, 10], snare: [4, 12], hat: 2, bass: 'bounce',
+      bpm: 112, swing: 0.18, root: [48, 48, 41, 43], kind: ['M', 'M', 'M', 'dom'],
+      kick: [0, 8], snare: [4, 12], hat: 2, bass: 'oompah', arp: 'stab',
       melody: parseMelody([
-        'E5 - - G5 - - C6 - B5 - G5 - E5 - D5 -',
-        'C5 - - E5 - - A5 - G5 - E5 - C5 - D5 -',
-        'F5 - - A5 - - C6 - A5 - F5 - A5 - C6 -',
-        'B5 - - - G5 - D5 - G5 - A5 - B5 - - -',
-        'G5 - E5 - C5 - E5 - G5 - - - A5 - G5 -',
-        'E5 - C5 - A4 - C5 - E5 - - - D5 - C5 -',
-        'A4 - C5 - F5 - A5 - G5 - F5 - E5 - F5 -',
-        'D5 - - - B4 - D5 - G5 - - - . . . .',
+        'C5 . E5 . G5 . A5 G5 . E5 . C5 . D5 E5 .',
+        'D#5 E5 . C5 . G4 . . C5 . . . . . . .',
+        'F5 . A5 . C6 . D6 C6 . A5 . F5 . G5 A5 .',
+        'G5 . F5 . D5 . B4 . G4 . A4 . B4 . D5 .',
+        'C5 . E5 . G5 . C6 - - . B5 . A5 . G5 .',
+        'G#5 A5 . G5 . E5 . . C5 - - - . . . .',
+        'F5 . E5 . F5 . A5 . C6 . A5 . F5 . D5 .',
+        'G5 - - . F5 . D5 . C5 - - - . . . .',
       ]),
     },
+    // greasy swung blues-funk groove for the fights
     battle: {
-      bpm: 152, root: [45, 41, 43, 40], kind: ['m', 'M', 'M', 'M'],
-      kick: [0, 6, 8, 11], snare: [4, 12], hat: 1, bass: 'gallop',
+      bpm: 132, swing: 0.22, root: [40, 40, 45, 47], kind: ['dom', 'dom', 'dom', 'dom'],
+      kick: [0, 7, 10], snare: [4, 12], hat: 2, bass: 'funk', arp: 'run',
       melody: parseMelody([
-        'A4 . A4 C5 . E5 . A5 - - G5 . E5 . C5 .',
-        'F4 . F4 A4 . C5 . F5 - - E5 . C5 . A4 .',
-        'G4 . G4 B4 . D5 . G5 - - F5 . D5 . B4 .',
-        'G#4 - B4 - E5 - G#5 - B5 - - - G#5 - E5 -',
-        'E5 - D5 - C5 - B4 - C5 - D5 - E5 - A5 -',
-        'F5 - E5 - D5 - C5 - A4 - C5 - F5 - - -',
-        'G5 - F5 - D5 - B4 - G4 - B4 - D5 - G5 -',
-        'G#5 - - - E5 - - - B4 - - - G#4 - B4 -',
+        'E5 . G5 . E5 G5 A5 . A#5 B5 . . A5 . G5 .',
+        'E5 - - . D5 . E5 . . . G5 . E5 . D5 .',
+        'A5 . C6 . A5 C6 D6 . D#6 E6 . . D6 . C6 .',
+        'B5 - - - A5 . F#5 . B4 . D#5 . F#5 . A5 .',
+        'E5 . E5 . G5 . E5 . B5 - - . A5 . G5 .',
+        'E5 . D5 . B4 . D5 . E5 - - - . . . .',
+        'A5 . A5 . C6 . A5 . E6 - - . D6 . C6 .',
+        'B5 . A5 . F#5 . D#5 . E5 - - - . . . .',
       ]),
     },
   };
-  const CHORD = { M: [0, 4, 7, 12], m: [0, 3, 7, 12] };
+  const CHORD = { M: [0, 4, 7, 12], m: [0, 3, 7, 12], dom: [0, 4, 7, 10] };
+  const FUNK = { 0: 0, 3: 12, 6: 0, 7: 10, 10: 0, 12: 12, 14: 7, 15: 10 };
 
   function pulse(duty) {
     const n = 48, real = new Float32Array(n), imag = new Float32Array(n);
@@ -123,21 +126,26 @@ const Sound = (() => {
     const mel = S.melody[s % S.melody.length];
     if (mel) tone(t, hz(mel.m), mel.len * sixteenth * 0.95, { wave: 'p25', gain: 0.17, dest: musicBus, vib: mel.len >= 3, release: 0.04 });
     if (mel && mel.len <= 2) tone(t + sixteenth * 1.5, hz(mel.m), mel.len * sixteenth * 0.8, { wave: 'p12', gain: 0.05, dest: musicBus });
-    tone(t, hz(root + 12 + ch[pos % 4]), sixteenth * 0.9, { wave: 'p12', gain: 0.06, dest: musicBus, release: 0.02 });
-    if (S.bass === 'bounce') {
-      if (pos % 2 === 0) tone(t, hz(root - 12 + (pos % 4 === 2 ? 12 : 0)), sixteenth * 1.8, { wave: 'p50', gain: 0.22, lp: 900, dest: musicBus });
-    } else if ([0, 2, 3].includes(pos % 4)) {
-      tone(t, hz(root - 12 + (pos % 8 === 0 ? 0 : pos % 4 === 0 ? 12 : 0)), sixteenth * 0.9, { wave: 'sawtooth', gain: 0.16, lp: 700, dest: musicBus });
+    if (S.arp === 'stab') {
+      if (pos % 4 === 2) for (const n of ch.slice(0, 3)) tone(t, hz(root + 12 + n), sixteenth * 0.8, { wave: 'p25', gain: 0.045, dest: musicBus, release: 0.02 });
+    } else tone(t, hz(root + 12 + ch[pos % 4]), sixteenth * 0.9, { wave: 'p12', gain: 0.05, dest: musicBus, release: 0.02 });
+    if (S.bass === 'oompah') {
+      if (pos % 8 === 0) tone(t, hz(root - 12), sixteenth * 1.6, { wave: 'p50', gain: 0.24, lp: 800, dest: musicBus });
+      if (pos % 8 === 4) tone(t, hz(root - 5), sixteenth * 1.6, { wave: 'p50', gain: 0.2, lp: 800, dest: musicBus });
+    } else if (FUNK[pos] !== undefined) {
+      // slap bass: octave pops get a brighter, shorter pluck
+      const pop = FUNK[pos] >= 10;
+      tone(t, hz(root - 12 + FUNK[pos]), sixteenth * (pop ? 0.6 : 1.4), { wave: 'sawtooth', gain: pop ? 0.2 : 0.24, lp: pop ? 1800 : 650, dest: musicBus, slide: pop ? undefined : hz(root - 12 + FUNK[pos]) * 0.97 });
     }
     if (S.kick.includes(pos)) kick(t);
     if (S.snare.includes(pos)) snare(t);
-    if (pos % S.hat === 0) hat(t, pos % 4 === 2);
+    if (pos % S.hat === 0) hat(t, pos === 14);
   }
 
   function schedule() {
     if (!ctx || !song) return;
     while (nextTime < ctx.currentTime + 0.15) {
-      if (musicOn) playStep(step, nextTime);
+      if (musicOn) playStep(step, nextTime + (step % 2 ? (song.swing || 0) * 60 / song.bpm / 4 : 0));
       nextTime += 60 / song.bpm / 4;
       step++;
     }
@@ -182,6 +190,11 @@ const Sound = (() => {
     tick() { tone(now(), 1500, 0.03, { wave: 'p50', gain: 0.08 }); },
     turn() { tone(now(), hz(81), 0.06, { wave: 'p25', gain: 0.1 }); tone(now() + 0.07, hz(88), 0.08, { wave: 'p25', gain: 0.1 }); },
     crumble() { noise(now(), 0.9, { type: 'lowpass', freq: 600, sweep: 60, gain: 0.6 }); tone(now(), 80, 0.8, { wave: 'sawtooth', slide: 30, gain: 0.2, lp: 300 }); },
+    clang() { [1800, 2400, 3100].forEach(f => tone(now(), f, 0.35, { wave: 'p12', slide: f * 0.97, gain: 0.08 })); noise(now(), 0.1, { freq: 5000, gain: 0.2 }); },
+    freeze() { [96, 91, 88, 84].forEach((m, i) => tone(now() + i * 0.04, hz(m), 0.12, { wave: 'p12', gain: 0.1 })); noise(now(), 0.4, { freq: 7000, gain: 0.12 }); },
+    power() { [60, 64, 67, 72, 76, 79, 84].forEach((m, i) => tone(now() + i * 0.035, hz(m + 12), 0.07, { wave: 'p25', gain: 0.13 })); },
+    ook() { [0, 0.16].forEach(d => tone(now() + d, 420, 0.13, { wave: 'p50', slide: 260, gain: 0.2, lp: 1500 })); },
+    fart() { tone(now(), 90, 0.45, { wave: 'sawtooth', slide: 55, gain: 0.35, lp: 400, vib: true }); noise(now(), 0.4, { type: 'lowpass', freq: 300, gain: 0.4 }); },
     win() { [72, 76, 79, 84, 79, 84, 88].forEach((m, i) => tone(now() + i * 0.11, hz(m), i === 6 ? 0.6 : 0.1, { wave: 'p25', gain: 0.18, vib: i === 6 })); },
     lose() { [67, 63, 60, 55].forEach((m, i) => tone(now() + i * 0.18, hz(m), 0.18, { wave: 'p50', gain: 0.15, lp: 2000 })); },
   };
