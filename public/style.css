@@ -134,8 +134,26 @@ b { text-shadow: 1px 1px 0 #1a0b10; }
 #ranking { font-size: 11px; line-height: 2.2; padding-left: 28px; margin: 0; }
 #ranking li::marker { color: #ffd84a; }
 #over { background: rgba(28,15,31,.55); }
-#how { justify-content: flex-start; }
+#how, #room { justify-content: flex-start; }
 #how .panel { margin: auto 0; }
+#room > .cols { margin: auto 0; }
+.c-purple { color: #c87aff; }
+
+/* ---------- class picker ---------- */
+.classpanel { order: 3; width: min(980px, 94vw); }
+.classgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 10px; }
+.classcard {
+  display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center;
+  background: #1c0f12; color: #f6e8c8; text-shadow: none; padding: 10px 6px;
+  border: 3px solid #7a4e2a; box-shadow: 3px 3px 0 #1a0b10; font-size: 8px; line-height: 1.5;
+}
+.classcard canvas { image-rendering: pixelated; }
+.classcard b { font-size: 9px; color: #ffd84a; }
+.classcard i { font-style: normal; color: #9aff5a; }
+.classcard small { color: #c8a070; font-size: 7px; }
+.classcard.on { border-color: #b8f040; background: #2a3a12; box-shadow: 0 0 0 2px #b8f040, 3px 3px 0 #1a0b10; }
+.classcard:hover { transform: rotate(-1deg) scale(1.03); }
+.item canvas { width: auto; height: auto; }
 
 #toast {
   position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%);
